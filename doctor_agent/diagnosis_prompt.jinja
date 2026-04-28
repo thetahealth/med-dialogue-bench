@@ -1,0 +1,23 @@
+{% if language == "zh" %}
+根据以下问诊对话，给出最可能的诊断。
+
+**对话记录：**
+{{ dialogue_history }}
+
+以 JSON 格式输出：
+```json
+{"diagnosis": "最可能的诊断"}
+```
+
+{% else %}
+Based on the following consultation dialogue, provide the most likely diagnosis.
+
+**Dialogue History:**
+{{ dialogue_history }}
+
+Respond in JSON format:
+```json
+{"diagnosis": "Most likely diagnosis"}
+```
+
+{% endif %}

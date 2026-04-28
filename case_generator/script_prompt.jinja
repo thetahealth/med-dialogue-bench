@@ -1,0 +1,337 @@
+{% if language == "zh" %}
+你是一个患者行为设计师。根据以下病例信息和指定的行为配置，为这个患者设计具体的行为脚本。
+
+## 患者关键信息（编号从 0 开始）
+
+{% for item in key_information %}
+{{ loop.index0 }}. {{ item }}
+{% endfor %}
+
+{% if diagnosis %}诊断（患者不知道）：{{ diagnosis }}{% endif %}
+{% if social_history %}社会背景：{{ social_history }}{% endif %}
+
+---
+
+## 当前配置
+
+| 维度 | 级别 |
+|------|------|
+| Disclosure | **{{ disclosure }}** |
+| Cognition | **{{ cognition }}** |
+| Logic | **{{ logic }}** |
+| Attitude | **{{ attitude }}** |
+| Purpose | **{{ purpose }}** |
+| Expression | **{{ expression }}** |
+
+请为以上配置中的**每个维度**设计具体的、与本病例相关的行为脚本。
+
+---
+
+## 各维度设计说明
+
+### 1. 信息披露：{{ disclosure }}
+
+控制患者透露多少关键信息。指定哪些编号的信息被隐瞒及透露条件。
+
+{% if disclosure == "responsive" %}
+问什么答什么，不主动补充额外信息。选 2-4 条患者会主动提及的信息（主诉及最明显的伴随症状），其余只在医生问到时才说。
+{% elif disclosure == "proactive" %}
+主动提供大部分信息，不等医生问就说。选 1-2 条不主动提的（如否认症状），其余主动说。
+{% elif disclosure == "selective" %}
+选择性透露，觉得不重要/尴尬的不说。选 3-5 条隐瞒，医生问到相关话题才说。
+{% elif disclosure == "reluctant" %}
+不情愿透露，需反复追问。选 5-8 条隐瞒，第一次问会敷衍，追问才说。
+{% elif disclosure == "withholding" %}
+故意隐瞒，直接问也否认。选 8-11 条隐瞒，反复追问并营造安全感才可能承认。
+{% endif %}
+
+**原则：**隐瞒的信息应有临床鉴别价值；动机合理（尴尬、害怕、觉得不重要）；不隐瞒主诉本身；编号 0 通常不隐瞒。各级别的 hidden 列表逐级递增。
+
+### 2. 认知水平：{{ cognition }}
+
+患者对自身疾病/症状的认知。给出患者会说的具体话。
+
+{% if cognition == "accurate" %}
+正确理解自己的症状，客观准确描述，不夸大不淡化，不自行猜测诊断。给出 2-3 句患者会说的准确描述。
+{% elif cognition == "partial_understanding" %}
+大致知道不对，但细节模糊。如"我觉得可能是XX，但不太确定"。
+{% elif cognition == "misconception" %}
+有具体错误归因（如"上火""受凉了"），深信不疑。
+{% elif cognition == "web_self_diagnosis" %}
+网上查了症状，有一个具体的错误自我诊断并反复提及。自诊应症状相似但实际错误。
+{% elif cognition == "folk_remedy" %}
+相信偏方/食疗/中药，已尝试或打算用某个具体偏方。对现代医学保留态度。
+{% elif cognition == "complete_denial" %}
+否认有问题，被家人逼来的。反复说"我觉得没什么事"。
+{% endif %}
+
+**原则：**内容必须与本病例相关；自诊选症状相似的不同疾病；偏方文化合理。
+
+### 3. 思维逻辑：{{ logic }}
+
+{% if logic == "consistent" %}
+患者叙述前后一致，无矛盾。给出 2-3 个患者会反复一致描述的关键要点（时间、程度、细节等）。
+
+**原则：**要点应涵盖症状的核心事实（时间、程度、诱因等），确保每次描述措辞一致。
+{% else %}
+设计患者叙述中的前后矛盾。
+
+{% if logic == "minor_inconsistency" %}
+1-2 个小出入（如时间"大概两天" vs "可能三天"），不影响判断。
+{% elif logic == "occasional_contradiction" %}
+2-3 个矛盾，涉及症状有无/时间/程度。被指出会修正。
+{% elif logic == "frequent_contradiction" %}
+3-4 个矛盾，包括否认之前说过的话。不主动修正。
+{% elif logic == "fabricating" %}
+2-3 个编造的症状或对真实症状的否认。看似合理但与病历不一致。
+{% endif %}
+
+**原则：**矛盾基于真实信息变形；类型多样（时间/存在/程度）；fabricating 的编造要合理。
+{% endif %}
+
+### 4. 态度：{{ attitude }}
+
+设计患者的就诊态度。给出与病例相关的具体话语和行为。
+
+{% if attitude == "compliant" %}
+完全配合，有问必答，态度友好，信任医生。给出 2-3 句配合性话语（如主动询问需要做什么检查、表示愿意遵医嘱等）。
+{% elif attitude == "reluctant" %}
+有保留，回答简短，需医生引导。给出 2-3 个场景和话语。
+{% elif attitude == "impatient" %}
+急躁，想快结束，对详细问诊不耐烦。给出原因和 2-3 句话。
+{% elif attitude == "evasive" %}
+回避敏感话题，转移话题。说明回避什么、为什么。
+{% elif attitude == "resistant" %}
+拒绝配合某些问题或检查。说明抗拒什么、为什么。
+{% elif attitude == "dominant" %}
+试图主导对话，告诉医生怎么做。说明要求什么。
+{% endif %}
+
+**原则：**动机合理（害怕/经济/时间压力/过往经验）；行为与病例相关。
+
+### 5. 就诊动机：{{ purpose }}
+
+设计患者来看病的真实目的。
+
+{% if purpose == "symptom_relief" %}
+希望缓解症状，症状影响了日常生活。说明症状对生活的具体影响，给出 2-3 句相关话语。
+{% elif purpose == "reassurance" %}
+想确认没大问题。说明具体担心什么病、为什么担心（家人得过、网上看到等）。
+{% elif purpose == "medication_request" %}
+想开特定的药。说明药名/药物类型和原因（以前吃过有效、朋友推荐等）。
+{% endif %}
+
+**原则：**内容与病例相关；reassurance 给出具体恐惧；medication_request 给出具体药名。
+
+### 6. 表达风格：{{ expression }}
+
+设计患者的表达方式。给出具体示例话语。
+
+{% if expression == "clear" %}
+条理清晰，用词准确，能按时间线或重要性组织信息。给出 2-3 句条理分明的描述。
+{% elif expression == "normal" %}
+日常口语，能说清楚但不太有条理，偶尔需要医生追问细节。给出 2-3 句日常表达。
+{% elif expression == "vague" %}
+用词不精确，症状描述含糊。给出 2-3 句模糊表达。
+{% elif expression == "verbose" %}
+反复重复，夹杂无关细节。给出 2-3 个反复提及的话题。
+{% elif expression == "tangential" %}
+容易跑题。{% if social_history %}根据社会背景设计 2-3 个常扯到的话题。{% else %}根据患者的年龄、职业等基本信息，设计 2-3 个常扯到的话题。{% endif %}
+{% elif expression == "incoherent" %}
+逻辑跳跃，时间线混乱。给出 2-3 个混乱表达示例。
+{% endif %}
+
+**原则：**风格与患者背景一致；给出具体话语示例。
+
+---
+
+## 输出格式
+
+输出一个 JSON 对象，包含全部 6 个维度的脚本。disclosure 维度使用结构化格式（含 hidden 列表），其余 5 个维度使用 `{"instruction": "..."}`：
+
+```json
+{
+  "disclosure": {
+    "hidden": [3, 9],
+    "reveal_condition": "医生反复追问或表示保密才说",
+    "instruction": "..."
+  },
+  "cognition": {"instruction": "..."},
+  "logic": {"instruction": "..."},
+  "attitude": {"instruction": "..."},
+  "purpose": {"instruction": "..."},
+  "expression": {"instruction": "..."}
+}
+```
+
+其中 `hidden` 是被隐瞒的关键信息编号列表（对应上方患者关键信息的编号），`reveal_condition` 是透露这些信息的条件。
+
+{% else %}
+You are a patient behavior designer. Based on the case information and specified behavioral configuration below, design specific behavioral scripts for this patient.
+
+## Patient Key Information (0-indexed)
+
+{% for item in key_information %}
+{{ loop.index0 }}. {{ item }}
+{% endfor %}
+
+{% if diagnosis %}Diagnosis (patient does NOT know this): {{ diagnosis }}{% endif %}
+{% if social_history %}Social background: {{ social_history }}{% endif %}
+
+---
+
+## Current Configuration
+
+| Dimension | Level |
+|-----------|-------|
+| Disclosure | **{{ disclosure }}** |
+| Cognition | **{{ cognition }}** |
+| Logic | **{{ logic }}** |
+| Attitude | **{{ attitude }}** |
+| Purpose | **{{ purpose }}** |
+| Expression | **{{ expression }}** |
+
+Design specific, case-relevant behavioral scripts for **every dimension** in this configuration.
+
+---
+
+## Dimension Design Instructions
+
+### 1. Disclosure: {{ disclosure }}
+
+Controls how much key information the patient reveals. Specify which item numbers are hidden and under what conditions they are revealed.
+
+{% if disclosure == "responsive" %}
+Answers what is asked without volunteering extra information. Pick 2-4 items the patient would mention on their own (chief complaint and most obvious associated symptoms); the rest are only shared when the doctor asks.
+{% elif disclosure == "proactive" %}
+Volunteers most information before being asked. Pick 1-2 items not volunteered (e.g., pertinent negatives); the rest are shared freely.
+{% elif disclosure == "selective" %}
+Shares selectively; things deemed unimportant or embarrassing are omitted. Pick 3-5 items hidden; shared only when the doctor asks about the relevant topic.
+{% elif disclosure == "reluctant" %}
+Reluctant to share; needs repeated questioning. Pick 5-8 items hidden; deflects on first ask, reveals on follow-up.
+{% elif disclosure == "withholding" %}
+Deliberately hides information; denies even when asked directly. Pick 8-11 items hidden; only admits after persistent questioning and trust-building.
+{% endif %}
+
+**Principles:** Hidden items should be clinically significant; hiding motivation must be realistic (embarrassment, fear, perceived irrelevance); don't hide the chief complaint; item 0 (demographics) is typically not hidden. Hidden lists grow with each level.
+
+### 2. Cognition: {{ cognition }}
+
+Patient's understanding of their illness/symptoms. Provide specific phrases the patient would say.
+
+{% if cognition == "accurate" %}
+Correctly understands their symptoms; describes them objectively without exaggeration or minimization; does not guess at a diagnosis. Provide 2-3 specific, accurate statements the patient would say.
+{% elif cognition == "partial_understanding" %}
+Roughly knows something is wrong but unclear on details. E.g., "I think it might be XX, but I'm not sure."
+{% elif cognition == "misconception" %}
+Has a specific wrong attribution (e.g., "just stress", "caught a cold") and firmly believes it.
+{% elif cognition == "web_self_diagnosis" %}
+Looked up symptoms online and has a specific incorrect self-diagnosis they repeatedly mention. Should be plausible but wrong.
+{% elif cognition == "folk_remedy" %}
+Believes in folk remedies/herbal treatments; has tried or plans to use a specific remedy. Skeptical of modern medicine.
+{% elif cognition == "complete_denial" %}
+Denies any problem; came because family/friends insisted. Repeatedly says "I'm sure it's nothing."
+{% endif %}
+
+**Principles:** Content must relate to this case; self-diagnosis should pick a different disease with similar symptoms; folk remedies should be culturally realistic.
+
+### 3. Logic: {{ logic }}
+
+{% if logic == "consistent" %}
+Patient's narrative is fully consistent with no contradictions. Provide 2-3 key points the patient would describe consistently every time (timing, severity, details, etc.).
+
+**Principles:** Key points should cover core facts about symptoms (timing, severity, triggers, etc.) and remain consistent in wording across the conversation.
+{% else %}
+Design contradictions in the patient's narrative.
+
+{% if logic == "minor_inconsistency" %}
+1-2 small discrepancies (e.g., "about two days" vs "maybe three days") that don't affect the overall picture.
+{% elif logic == "occasional_contradiction" %}
+2-3 contradictions involving symptom presence/timing/severity. Corrects when pointed out.
+{% elif logic == "frequent_contradiction" %}
+3-4 contradictions, including denying previous statements. Won't self-correct.
+{% elif logic == "fabricating" %}
+2-3 fabricated symptoms or denials of real ones. Plausible but inconsistent with actual history.
+{% endif %}
+
+**Principles:** Contradictions based on real information; vary types (temporal/existential/severity); fabrications must be plausible.
+{% endif %}
+
+### 4. Attitude: {{ attitude }}
+
+Design the patient's consultation attitude. Provide case-specific phrases and behaviors.
+
+{% if attitude == "compliant" %}
+Fully cooperative, answers willingly, friendly, trusts the doctor. Provide 2-3 cooperative phrases (e.g., proactively asking about tests needed, expressing willingness to follow advice).
+{% elif attitude == "reluctant" %}
+Reserved, gives short answers, needs doctor to draw out details. Provide 2-3 scenarios and phrases.
+{% elif attitude == "impatient" %}
+Wants to finish quickly, annoyed by detailed questioning. Provide the reason and 2-3 impatient phrases.
+{% elif attitude == "evasive" %}
+Deflects when asked about sensitive topics. Specify what they avoid and why.
+{% elif attitude == "resistant" %}
+Refuses to cooperate with certain questions or examinations. Specify what and why.
+{% elif attitude == "dominant" %}
+Tries to control the conversation, tells the doctor what to do. Specify what they demand.
+{% endif %}
+
+**Principles:** Motivation must be realistic (fear/cost/time pressure/past experience); behavior must relate to the case.
+
+### 5. Purpose: {{ purpose }}
+
+Design the patient's real reason for visiting.
+
+{% if purpose == "symptom_relief" %}
+Wants symptom relief — symptoms are affecting daily life. Describe specifically how symptoms impact daily life, provide 2-3 related phrases.
+{% elif purpose == "reassurance" %}
+Wants to confirm nothing serious is wrong. Specify what disease they fear and why (family history, read online, etc.).
+{% elif purpose == "medication_request" %}
+Wants a specific medication. Specify the drug name/type and reason (used before, friend recommended, etc.).
+{% endif %}
+
+**Principles:** Content must relate to the case; reassurance needs specific fears; medication_request needs specific drug names.
+
+### 6. Expression: {{ expression }}
+
+Design the patient's communication style. Provide specific example phrases.
+
+{% if expression == "clear" %}
+Organized and precise; uses timeline or prioritizes key symptoms naturally. Provide 2-3 well-structured statements.
+{% elif expression == "normal" %}
+Everyday language; gets the point across but isn't very organized; the doctor may need to follow up for details. Provide 2-3 typical everyday expressions.
+{% elif expression == "vague" %}
+Imprecise wording, unclear symptom descriptions. Provide 2-3 vague statements.
+{% elif expression == "verbose" %}
+Repetitive, adds unnecessary details. Provide 2-3 topics the patient over-elaborates on.
+{% elif expression == "tangential" %}
+Frequently goes off-topic. {% if social_history %}Based on social background, design 2-3 topics they ramble about.{% else %}Based on the patient's age, occupation, and other demographics, design 2-3 topics they ramble about.{% endif %}
+{% elif expression == "incoherent" %}
+Jumps between topics, mixes up timelines, confuses cause and effect. Provide 2-3 examples.
+{% endif %}
+
+**Principles:** Style should match the patient's background; provide specific example phrases.
+
+---
+
+## Output Format
+
+Output a JSON object containing scripts for ALL 6 dimensions. The disclosure dimension uses a structured format (with a hidden list); the other 5 use `{"instruction": "..."}`:
+
+```json
+{
+  "disclosure": {
+    "hidden": [3, 9],
+    "reveal_condition": "Only reveals when the doctor asks repeatedly or assures confidentiality",
+    "instruction": "..."
+  },
+  "cognition": {"instruction": "..."},
+  "logic": {"instruction": "..."},
+  "attitude": {"instruction": "..."},
+  "purpose": {"instruction": "..."},
+  "expression": {"instruction": "..."}
+}
+```
+
+Where `hidden` is a list of key information item numbers (matching the numbered items above) that the patient conceals, and `reveal_condition` describes under what circumstances those items may be revealed.
+
+{% endif %}

@@ -1,0 +1,33 @@
+[project]
+name = "meddialbench"
+version = "0.1.0"
+description = "A controlled factorial benchmark for evaluating LLM diagnostic robustness under adversarial patient behaviors."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Anonymous", email = "anon@example.com" },
+]
+dependencies = [
+    "openai>=1.30",
+    "anthropic>=0.40",
+    "google-generativeai>=0.7",
+    "jinja2>=3.0",
+    "pandas>=2.0",
+    "numpy>=1.24",
+    "scipy>=1.11",
+    "matplotlib>=3.7",
+    "datasets>=2.14",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "pytest-cov>=4.0"]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["doctor_agent*", "patient_agent*", "case_generator*", "benchmark*", "shared*"]
+exclude = ["tests*", "scripts*", "data*", "docs*", "examples*"]

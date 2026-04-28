@@ -1,0 +1,116 @@
+{% if language == "zh" %}
+你是一个医学数据分析助手。根据以下 OSCE 病例数据，提取**患者能够向医生报告的所有关键事实**。
+
+## 病例数据
+
+- 人口统计：{{ demographics }}
+- 主诉：{{ primary_symptom }}
+{% if secondary_symptoms %}- 伴随症状：{{ secondary_symptoms }}{% endif %}
+- 病史叙述：{{ history }}
+{% if past_medical_history %}- 既往史：{{ past_medical_history }}{% endif %}
+{% if medications %}- 用药史：{{ medications }}{% endif %}
+{% if social_history %}- 社会史：{{ social_history }}{% endif %}
+{% if family_history %}- 家族史：{{ family_history }}{% endif %}
+{% if review_of_systems %}- 系统回顾：{{ review_of_systems }}{% endif %}
+
+## 参考信息（仅供提取参考，不要出现在输出中）
+
+- 正确诊断：{{ correct_diagnosis }}
+{% if objective_for_doctor %}- 医生的问诊目标：{{ objective_for_doctor }}{% endif %}
+
+利用以上参考信息来判断哪些事实对**鉴别诊断**最关键，确保这些事实被优先提取且不遗漏。注意：输出中不要包含诊断本身或任何暗示诊断的内容。
+
+## 要求
+
+提取患者能报告的**离散事实**，每条一个独立信息点。包括：
+1. 人口统计信息（年龄、性别、职业等）
+2. 主诉和各个症状（每个症状单独一条）
+3. 时间信息（起病时间、持续时间、频率等）
+4. 加重/缓解因素
+5. 既往病史、用药史、社会史中的各个要点
+6. 患者否认的症状（如"没有发烧"、"没有胸痛"）
+
+## 空值处理
+病例数据中某些字段可能为空。请按以下规则处理：
+- **用药史为空** → 输出一条否认事实，如"我没有在吃任何药"（无用药史本身是重要的临床信息）
+- **既往史为空** → 不输出任何相关条目（数据缺失，不等于没有既往病史）
+- **家族史为空** → 不输出任何相关条目（数据缺失，不等于没有家族史）
+- **社会史为空** → 不输出任何相关条目（数据缺失，不等于没有社会史）
+- **伴随症状为空** → 不输出任何相关条目（有些病例确实只有主诉）
+- **系统回顾为空** → 不输出任何相关条目（数据缺失，不等于所有系统正常）
+
+## 规则
+- 每条事实应简短（一句话以内）
+- 用患者口语表达，不用医学术语
+- 按重要性排序：主诉 > 关键伴随症状 > 时间/加重缓解 > 病史 > 否认症状
+- 不包含诊断信息或患者无法感知的检查结果
+- 数据中的**否认性陈述必须保留**（如既往史写"No significant past medical history"，应输出"我以前没有得过什么大病"；用药写"None"，应输出"我没有在吃任何药"）。否认信息是医生问诊的重要判断依据，不要遗漏
+- 通常 8-15 条
+
+## 输出格式
+
+只输出一个 JSON 数组，不要其他文本：
+
+```json
+["事实1", "事实2", ...]
+```
+
+{% else %}
+You are a medical data analyst. Extract **all key facts the patient can report to a doctor** from the following OSCE case data.
+
+## Case Data
+
+- Demographics: {{ demographics }}
+- Chief Complaint: {{ primary_symptom }}
+{% if secondary_symptoms %}- Associated Symptoms: {{ secondary_symptoms }}{% endif %}
+- History: {{ history }}
+{% if past_medical_history %}- Past Medical History: {{ past_medical_history }}{% endif %}
+{% if medications %}- Medications: {{ medications }}{% endif %}
+{% if social_history %}- Social History: {{ social_history }}{% endif %}
+{% if family_history %}- Family History: {{ family_history }}{% endif %}
+{% if review_of_systems %}- Review of Systems: {{ review_of_systems }}{% endif %}
+
+## Reference (for extraction guidance only — do NOT include in output)
+
+- Correct Diagnosis: {{ correct_diagnosis }}
+{% if objective_for_doctor %}- Doctor's Objective: {{ objective_for_doctor }}{% endif %}
+
+Use the above reference to determine which facts are most critical for **differential diagnosis**, and ensure those facts are prioritized and not missed. Do NOT include the diagnosis itself or anything that hints at it in the output.
+
+## Requirements
+
+Extract **discrete facts** the patient can report, one independent information point per item. Include:
+1. Demographics (age, gender, occupation, etc.)
+2. Chief complaint and each symptom (one per item)
+3. Temporal information (onset, duration, frequency)
+4. Exacerbating/relieving factors
+5. Key points from past medical history, medications, social history
+6. Pertinent negatives the patient can report (e.g., "no fever", "no chest pain")
+
+## Handling Empty Fields
+
+Some fields in the case data may be empty. Follow these rules:
+- **Medications is empty** → Output a denial fact, e.g., "I am not taking any medications" (absence of medications is clinically significant)
+- **Past Medical History is empty** → Do NOT output any related item (missing data ≠ no past medical history)
+- **Family History is empty** → Do NOT output any related item (missing data ≠ no family history)
+- **Social History is empty** → Do NOT output any related item (missing data ≠ no social history)
+- **Associated Symptoms is empty** → Do NOT output any related item (some cases only have a chief complaint)
+- **Review of Systems is empty** → Do NOT output any related item (missing data ≠ all systems normal)
+
+## Rules
+- Each fact should be brief (one sentence or less)
+- Use patient-friendly language, not medical jargon
+- Order by importance: chief complaint > key symptoms > temporal/modifiers > history > negatives
+- Do NOT include diagnosis or findings the patient cannot perceive
+- **Denial statements in the data MUST be preserved** (e.g., if PMH says "No significant past medical history", output "I have not had any significant medical problems in the past"; if Medications says "None", output "I am not taking any medications"). Denials are critical for clinical reasoning — do not omit them
+- Typically 8-15 items
+
+## Output Format
+
+Output ONLY a JSON array, no other text:
+
+```json
+["fact 1", "fact 2", ...]
+```
+
+{% endif %}

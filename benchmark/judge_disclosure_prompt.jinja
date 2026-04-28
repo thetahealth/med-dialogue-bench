@@ -1,0 +1,22 @@
+Below are numbered patient messages from a medical consultation, and a list of {{ n }} key facts about the patient.
+
+For each of the {{ n }} key facts, determine in which patient message (P1, P2, ...) the fact was FIRST disclosed (directly stated or clearly implied). If the fact was never disclosed in any message, return 0.
+"Clearly implied" means the information can be unambiguously inferred from the patient's exact words, without requiring medical interpretation.
+
+Patient messages:
+{% for msg in patient_messages %}
+P{{ loop.index }}: {{ msg }}
+{% endfor %}
+
+Key facts ({{ n }} items):
+{% for fact in key_facts %}
+{{ loop.index }}. {{ fact }}
+{% endfor %}
+
+Return ONLY a JSON array of EXACTLY {{ n }} integers, no explanation.
+- The i-th integer corresponds to key fact i.
+- Value = patient message number (1-based) where first disclosed, or 0 if never disclosed.
+
+Example for {{ n }} facts: [{{ example }}]
+
+JSON array:

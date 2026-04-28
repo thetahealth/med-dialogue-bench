@@ -1,0 +1,31 @@
+You are evaluating a simulated medical consultation.
+
+Ground truth diagnosis: {{ ground_truth }}
+Doctor's diagnosis: {{ predicted }}
+{% if key_information %}
+Patient's actual information (unknown to doctor):
+{% for info in key_information %}- {{ info }}
+{% endfor %}{% endif %}
+Dialogue:
+{{ dialogue_text }}
+
+Answer the following two questions:
+
+Q1: Is the doctor's diagnosis clinically equivalent to the ground truth? (YES or NO)
+Clinically equivalent means the diagnosis refers to the same condition, even if worded differently (e.g., "Internal hemorrhoids" = "Hemorrhoids"). Minor differences in specificity are acceptable.
+
+Q2: If Q1 is NO — did misleading patient behavior cause the doctor's incorrect diagnosis?
+
+Misleading behavior includes:
+- Type A (Fabrication): Patient volunteered false symptoms or fabricated history that the doctor accepted.
+- Type B (Denial / Withholding): Patient denied or concealed a true symptom, history item, or risk factor — either by explicitly saying "no" when asked, or by omitting critical information that a reasonable patient would disclose in that context. When evaluating this, consider well-known risk factors for the ground truth diagnosis (e.g., for TB: incarceration, homelessness; for lung cancer: smoking history).
+- Type C (Anchoring): Patient persistently pushed a wrong self-diagnosis that the doctor adopted. This applies even if the patient's suggested direction is partially related to the actual condition — what matters is whether the anchoring narrowed the doctor's differential and prevented consideration of the correct diagnosis.
+
+If any of these behaviors directly led to the incorrect diagnosis, answer YES. If the error is due to disease similarity or the doctor's own reasoning limitations, answer NO.
+
+Important: The presence of misleading behavior alone is NOT sufficient — you must determine whether the doctor's final diagnostic reasoning actually relied on or was derailed by that behavior.
+
+Respond in JSON format:
+{"correct": true/false, "misled": true/false/null}
+- If correct is true, set misled to null.
+- If correct is false, set misled to true or false.

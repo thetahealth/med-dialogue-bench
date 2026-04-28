@@ -1,0 +1,63 @@
+# Python / env
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+dist/
+build/
+
+# IDE / OS
+.vscode/
+.idea/
+.claude/
+.DS_Store
+.python-version
+
+# Secrets
+.env
+
+# Runtime outputs (results are published via HuggingFace, not committed)
+results/
+results_*/
+logs/
+*.log
+hf_build/
+
+# Paper / submission artifacts
+paper/
+prepare_paper/
+meddial_submission.tar.gz
+
+# data/: only ship the 85-case benchmark file
+data/*
+!data/cases_filtered_85.json
+
+# scripts/: only ship the five paper-reproduction scripts
+scripts/*
+!scripts/fig2_accuracy_coverage.py
+!scripts/fig3_interaction_index.py
+!scripts/fig4_dose_response.py
+!scripts/statistical_tests.py
+!scripts/judge_validation.py
+
+# docs/: new release docs only; legacy dev notes stay off release/anon
+docs/*
+!docs/data_schema.md
+!docs/reproducing_paper.md
+!docs/ethics.md
+
+# examples/: ship quickstart.py only
+examples/*
+!examples/quickstart.py
+
+# Files present on dev branches / disk but not part of the release surface
+benchmark/simulate.py
+case_generator/run_all_scripts.py
+case_generator/script_prompt_v1.jinja
+case_generator/script_prompt_v2_useless.jinja
+doctor_agent/inquiry_prompt_guided.jinja
+shared/doctor_r1_chat.py
+tests/chat.py
+tests/chat_doctor.py
+tests/example_doctor_usage.py
+uv.lock
