@@ -1,8 +1,11 @@
 # Dataset Schemas
 
-Both datasets are distributed via HuggingFace Datasets. The on-disk JSON in
-this repo (`data/cases_filtered_85.json`) has the same content as the cases
-dataset below but uses the legacy CamelCase column names.
+Cases and pre-computed dialogues are distributed via the Hugging Face dataset
+at https://huggingface.co/datasets/anon-meddial-2026/meddialbench. A local
+copy of the cases is also at `data/cases_filtered_85.json` in this repository
+(legacy CamelCase column names; the schema below shows the canonical names).
+Dialogues are organized as
+`<doctor_model>/<config>/dial_<case>.json` in the dataset.
 
 ## meddial-cases (85 rows)
 
@@ -56,5 +59,5 @@ future revision of this dataset may include rationales from a re-run.
 
 **Secondary judge.** The secondary judge (Gemini 3 Pro) was applied only to a
 220-dialogue sub-sample used to compute inter-judge agreement
-(kappa = 0.882). That sub-sample and its secondary verdicts live in the
-paper's supplementary materials rather than in the main dialogues dataset.
+(kappa = 0.882). That sub-sample is not included in the main dialogues
+dataset; aggregated agreement statistics are reported in the paper.

@@ -39,8 +39,9 @@ mitigating them.
 
 LLM providers retire and update models without notice. Results from
 re-running this benchmark against newer model snapshots will not match the
-paper's numbers exactly. The HuggingFace dialogues dataset preserves the
-original runs for longitudinal comparison.
+paper's numbers exactly. The dialogues hosted on Hugging Face
+(https://huggingface.co/datasets/anon-meddial-2026/meddialbench) preserve
+the original runs for longitudinal comparison.
 
 ## Limitations explicitly acknowledged
 

@@ -16,7 +16,7 @@ build/
 # Secrets
 .env
 
-# Runtime outputs (results are published via HuggingFace, not committed)
+# Runtime outputs (paper-cited results bundled with submission, not committed)
 results/
 results_*/
 logs/

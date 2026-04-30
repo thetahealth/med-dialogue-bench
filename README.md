@@ -4,8 +4,8 @@ A controlled factorial benchmark for evaluating LLM diagnostic robustness under 
 
 - **Paper:** under review, NeurIPS 2026
 - **Code:** this repository
-- **Cases dataset:** https://huggingface.co/datasets/anon-meddial/meddial-cases
-- **Dialogues dataset:** https://huggingface.co/datasets/anon-meddial/meddial-dialogues
+- **Cases & pre-computed dialogues (~7.2K):** https://huggingface.co/datasets/anon-meddial-2026/meddialbench (Croissant: https://huggingface.co/api/datasets/anon-meddial-2026/meddialbench/croissant)
+- **Cases (local copy):** `data/cases_filtered_85.json` in this repository (identical to the HF version)
 
 ## What's in this repo
 
@@ -31,10 +31,13 @@ The quickstart runs one case × one behavioral config × one doctor model (~1 mi
 
 ## Reproducing the paper
 
-Every figure and statistic can be reproduced **without running any model** by downloading the pre-computed dialogues from HuggingFace:
+Every figure and statistic can be reproduced **without running any model** using the pre-computed dialogues hosted on Hugging Face. Download into a directory named `results_non_dynamic/` at the repository root so that scripts can find it:
 
 ```bash
-pip install datasets
+pip install huggingface_hub
+hf download anon-meddial-2026/meddialbench \
+    --repo-type=dataset \
+    --local-dir=results_non_dynamic
 python scripts/statistical_tests.py        # paper Table 3, Table 4
 python scripts/fig2_accuracy_coverage.py   # paper Figure 2
 python scripts/fig3_interaction_index.py   # paper Figure 4 (O/E ratio)

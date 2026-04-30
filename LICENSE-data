@@ -1,14 +1,14 @@
 MedDialBench Data License
 
 The cases, dialogues, and all JSON/metadata files in this repository and in
-the associated HuggingFace datasets are licensed under the Creative Commons
-Attribution 4.0 International License (CC BY 4.0).
+the companion Hugging Face dataset
+(https://huggingface.co/datasets/anon-meddial-2026/meddialbench) are licensed
+under the Creative Commons Attribution 4.0 International License (CC BY 4.0).
 
 Full license text: https://creativecommons.org/licenses/by/4.0/legalcode
 
 Attribution requirements:
 - Cite the accompanying paper (see CITATION.bib).
-- Link to the HuggingFace dataset pages where practical.
 
 Third-party content & derivative disclosure:
 - A subset of the clinical vignettes in cases_filtered_85.json is derived from

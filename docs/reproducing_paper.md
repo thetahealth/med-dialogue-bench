@@ -1,35 +1,33 @@
 # Reproducing Paper Results
 
 Every figure and statistic in the paper can be reproduced from the
-pre-computed dialogues on HuggingFace. **No API keys required.**
+pre-computed dialogues hosted on Hugging Face. **No API keys required.**
 
 ## 1. Set up environment
 
 ```bash
 pip install -e .
+pip install huggingface_hub
 ```
 
 ## 2. Download the dialogues dataset
 
-```python
-from datasets import load_dataset
-ds = load_dataset("anon-meddial/meddial-dialogues")
+The Hugging Face dataset contains the full directory tree
+(`claude-opus-4-6/`, `qwen3.5-plus/`, `deepseek-v3.2/`, `gemini-3.1-pro/`,
+`gpt-5.4/`, `judge_validation/`, `adherence/`, plus `cases_filtered_85.json`).
+Download it into `results_non_dynamic/` at the repository root:
+
+```bash
+hf download anon-meddial-2026/meddialbench \
+    --repo-type=dataset \
+    --local-dir=results_non_dynamic
 ```
 
-**Current state of the scripts:** the five analysis scripts under
-`scripts/` read from a local directory tree (`results_non_dynamic/`) that
-mirrors how dialogues were written during the paper runs. Public users have
-two options:
+The five analysis scripts under `scripts/` read directly from this
+`results_non_dynamic/` tree, so no further setup is required.
 
-1. Use the HuggingFace dataset directly by replacing the disk I/O in each
-   script with `load_dataset(...)`. A reshape helper lives at
-   `scripts_internal/build_hf_dialogues.py` and documents the field mapping.
-2. Rebuild a local `results_non_dynamic/` tree from the HuggingFace dataset:
-   each row becomes `results_non_dynamic/<doctor_model>/<config>/dial_<case>.json`
-   (turns) and `eval_<case>.json` (judge verdicts + metric fields).
-
-A future revision of this repo will ship the scripts with native HF support
-so this reshape step is not required.
+Croissant metadata for the dataset is at
+`https://huggingface.co/api/datasets/anon-meddial-2026/meddialbench/croissant`.
 
 ## 3. Regenerate results
 
